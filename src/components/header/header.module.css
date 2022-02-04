@@ -1,0 +1,14 @@
+.header {
+  align-items: center;
+  background-color: #d7d7d7;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+  color: black;
+  display: flex;
+  height: 5rem;
+  justify-content: space-between;
+  left: 0;
+  padding: 1rem;
+  position: fixed;
+  top: 0;
+  width: 100%;
+}
