@@ -1,9 +1,11 @@
 import { useDispatch } from 'react-redux';
 import { Fragment, useEffect, useState } from 'react';
 
+import classes from './recipes.module.css';
 import { ActionType } from '../../store/app-store';
 import { Recipe } from '../../models/Recipe';
 import Card from '../card/card';
+import DynamicGrid from '../dynamin-grid/dynamic-grid';
 
 const Recipes = () => {
   const dispatch = useDispatch();
@@ -51,15 +53,28 @@ const Recipes = () => {
 
   const clickHandler = (recipe: Recipe) => {
     dispatch({ type: ActionType.SelectRecipe, payload: recipe });
-  }  
+  };
 
   return (
-    <Fragment>
+    <div className={classes.recipes}>
       {isLoading && <h3>Loading...</h3>}
-      {!isLoading && recipes.map((recipe: Recipe) => {
-        return (<Card key={recipe.id} recipe={recipe} clickHander={clickHandler}/>)
-      })}
-    </Fragment>
+      {!isLoading && (
+        <Fragment>
+          <h2>Recipes</h2>
+          <DynamicGrid cols={3}>
+            {recipes.map((recipe: Recipe, index: number) => {
+              return (
+                <Card
+                  key={recipe.id}
+                  recipe={recipe}
+                  clickHander={clickHandler}
+                />
+              );
+            })}
+          </DynamicGrid>
+        </Fragment>
+      )}
+    </div>
   );
 };
 
