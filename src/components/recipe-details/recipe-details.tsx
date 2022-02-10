@@ -1,19 +1,18 @@
 import { Fragment } from 'react';
-import { RootStateOrAny, useSelector } from 'react-redux';
-import { Ingredient } from '../../models/Ingredient';
+import { useParams } from "react-router-dom";
 
 import classes from './recipe-details.module.css';
+import { Ingredient } from '../../models/Ingredient';
+import { recipes } from '../../pages/recipes/recipes';
 
 const RecipeDetails = () => {
-  const recipe = useSelector((state: RootStateOrAny) => {
-    return state.selectedItem;
-  });
-
+  const params = useParams();
+  const recipe = recipes[+(params.recipeId || 0) - 1];
   return (
     <Fragment>
       {!recipe && (
         <div className={classes.noRecipe}>
-          <p>Please select a recipe</p>
+          <p>Recipe Does Not Exist</p>
         </div>
       )}
       {recipe && (
