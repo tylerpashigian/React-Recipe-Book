@@ -3,11 +3,12 @@ import { useParams } from "react-router-dom";
 
 import classes from './recipe-details.module.css';
 import { Ingredient } from '../../models/Ingredient';
-import { recipes } from '../../pages/recipes/recipes';
+import { mockRecipes } from '../../mocks/mockRecipes';
 
 const RecipeDetails = () => {
   const params = useParams();
-  const recipe = recipes[+(params.recipeId || 0) - 1];
+  // Replace this with an API request/database call once I have actual data
+  const recipe = mockRecipes[+(params.recipeId || 0) - 1];
   return (
     <Fragment>
       {!recipe && (

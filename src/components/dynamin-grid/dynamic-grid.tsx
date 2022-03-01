@@ -1,5 +1,6 @@
 import { ReactElement } from 'react';
 
+// Inspired by https://alexlogorz.medium.com/simple-responsive-grid-system-using-react-and-bootstrap-2b322372b525
 const DynamicGrid = (props: any) => {
   const rowCount = Math.floor(props.children.length / props.cols);
   let index = 0;
