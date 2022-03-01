@@ -3,11 +3,11 @@ import { useParams } from "react-router-dom";
 
 import classes from './recipe-details.module.css';
 import { Ingredient } from '../../models/Ingredient';
-import { recipes } from '../../pages/recipes/recipes';
+import { mockRecipes } from '../../pages/recipes/recipes';
 
 const RecipeDetails = () => {
   const params = useParams();
-  const recipe = recipes[+(params.recipeId || 0) - 1];
+  const recipe = mockRecipes[+(params.recipeId || 0) - 1];
   return (
     <Fragment>
       {!recipe && (

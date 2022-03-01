@@ -1,18 +1,18 @@
 import { createStore } from 'redux';
 
 export enum ActionType {
-  SelectRecipe,
+  SetRecipes,
 }
 
 const initalState = {
-  selectedItem: null,
+  recipes: [],
 };
 
 const reducer = (state: any = initalState, action: any) => {
   switch (action.type) {
-    case ActionType.SelectRecipe:
+    case ActionType.SetRecipes:
       return {
-        selectedItem: action.payload,
+        recipes: action.payload,
       };
     default:
       return state;

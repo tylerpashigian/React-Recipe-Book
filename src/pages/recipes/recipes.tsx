@@ -5,17 +5,24 @@ import { Recipe } from '../../models/Recipe';
 import Card from '../../components/card/card';
 import DynamicGrid from '../../components/dynamin-grid/dynamic-grid';
 import { Link, Outlet } from 'react-router-dom';
+import { RootStateOrAny, useDispatch, useSelector } from 'react-redux';
+import { ActionType } from '../../store/app-store';
 
 const Recipes = () => {
+  const dispatch = useDispatch();
+  const recipes = useSelector((state: RootStateOrAny) => state.recipes);
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
-    setIsLoading(true);
-    // Demo to represent loading functionality until I get a database set up
-    setTimeout(() => {
-      setIsLoading(false);
-    }, 1000);
-  }, []);
+    if (!recipes.length) {
+      // Demo to represent loading functionality until I get a database set up
+      setIsLoading(true);
+      setTimeout(() => {
+        setIsLoading(false);
+        dispatch({ type: ActionType.SetRecipes, payload: [...mockRecipes] })
+      }, 1000);
+    }
+  }, [dispatch, recipes]);
 
   return (
     <Fragment>
@@ -28,9 +35,7 @@ const Recipes = () => {
               {recipes.map((recipe: Recipe, index: number) => {
                 return (
                   <Link key={recipe.id} to={`${recipe.id}`}>
-                    <Card
-                      name={recipe.name}
-                    />
+                    <Card name={recipe.name} />
                   </Link>
                 );
               })}
@@ -45,7 +50,7 @@ const Recipes = () => {
 
 export default Recipes;
 
-export const recipes: Recipe[] = [
+export const mockRecipes: Recipe[] = [
   {
     id: 1,
     name: 'Pesto',
