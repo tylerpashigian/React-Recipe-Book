@@ -1,6 +1,7 @@
 import { createStore } from 'redux';
 
 export enum ActionType {
+  AddRecipe,
   SetRecipes,
 }
 
@@ -10,6 +11,10 @@ const initalState = {
 
 const reducer = (state: any = initalState, action: any) => {
   switch (action.type) {
+    case ActionType.AddRecipe:
+      return {
+        recipes: [...state.recipes, action.payload]
+      }
     case ActionType.SetRecipes:
       return {
         recipes: action.payload,

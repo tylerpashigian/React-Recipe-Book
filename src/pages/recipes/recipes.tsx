@@ -8,11 +8,15 @@ import Card from '../../components/card/card';
 import DynamicGrid from '../../components/dynamin-grid/dynamic-grid';
 import { ActionType } from '../../store/app-store';
 import { mockRecipes } from '../../mocks/mockRecipes';
+import Modal from '../../components/UI/modals/modal/modal';
+import AddItem from '../../components/UI/modals/add-item/add-item';
+import Button from '../../components/UI/button/button';
 
 const Recipes = () => {
   const dispatch = useDispatch();
   const recipes = useSelector((state: RootStateOrAny) => state.recipes);
   const [isLoading, setIsLoading] = useState(false);
+  const [addingItem, setAddingItem] = useState(false);
 
   useEffect(() => {
     if (!recipes.length) {
@@ -24,6 +28,10 @@ const Recipes = () => {
       }, 1000);
     }
   }, [dispatch, recipes]);
+
+  const toggleModal = () => {
+    setAddingItem(previousAddingItem => !previousAddingItem);
+  };
 
   return (
     <div className={classes.recipes}>
@@ -40,6 +48,14 @@ const Recipes = () => {
               );
             })}
           </DynamicGrid>
+          {addingItem && (
+            <Modal onClick={toggleModal}>
+              <AddItem onClose={toggleModal} />
+            </Modal>
+          )}
+          <div className={classes['add-button']}>
+            <Button onClick={toggleModal} buttonText="Add Recipe"></Button>
+          </div>
         </Fragment>
       )}
     </div>

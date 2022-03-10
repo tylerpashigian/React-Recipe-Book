@@ -3,12 +3,13 @@ import { useParams } from "react-router-dom";
 
 import classes from './recipe-details.module.css';
 import { Ingredient } from '../../models/Ingredient';
-import { mockRecipes } from '../../mocks/mockRecipes';
+import { RootStateOrAny, useSelector } from 'react-redux';
 
 const RecipeDetails = () => {
   const params = useParams();
   // Replace this with an API request/database call once I have actual data
-  const recipe = mockRecipes[+(params.recipeId || 0) - 1];
+  const recipes = useSelector((state: RootStateOrAny) => state.recipes);
+  const recipe = recipes[+(params.recipeId || 0) - 1];
   return (
     <Fragment>
       {!recipe && (
@@ -19,7 +20,7 @@ const RecipeDetails = () => {
       {recipe && (
         <Fragment>
           <h3>{recipe.name}</h3>
-          <p>{recipe.description}</p>
+          <p className={classes.recipeInstructions}>{recipe.description}</p>
           {recipe.ingredients.map((ingredient: Ingredient) => {
             return <li key={ingredient.name}>{ingredient.name}</li>;
           })}
