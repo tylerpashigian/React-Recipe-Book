@@ -1,8 +1,10 @@
 .modal {
   position: fixed;
-  top: 20vh;
+  top: 15%;
   left: 5%;
   width: 90%;
+  max-height: 70%;
+  overflow: scroll;
   background-color: white;
   padding: 1rem;
   border-radius: 14px;
