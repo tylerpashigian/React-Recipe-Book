@@ -1,6 +1,7 @@
 import { Fragment, useState } from 'react';
 import { RootStateOrAny, useDispatch, useSelector } from 'react-redux';
 
+import classes from '../add-item/add-item.module.css';
 import { Ingredient } from '../../../../models/Ingredient';
 import { Recipe } from '../../../../models/Recipe';
 import { ActionType } from '../../../../store/app-store';
@@ -8,12 +9,19 @@ import { ActionType } from '../../../../store/app-store';
 const AddItem = (props: any) => {
   const dispatch = useDispatch();
   const [recipeName, setRecipeName] = useState('');
+  const [recipeNameTouched, setRecipeNameTouched] = useState(false);
   const [recipeInstrcutions, setRecipeInstructions] = useState('');
 
   const recipes = useSelector((state: RootStateOrAny) => state.recipes);
+  const recipeIsValid = recipeName.trim() !== '';
+  const recipeFormIsInvalid = !recipeIsValid && recipeNameTouched;
 
   const recipeNameHandler = (event: any) => {
     setRecipeName(event.target.value);
+  };
+
+  const recipeNameBlurHandler = (event: any) => {
+    setRecipeNameTouched(true);
   };
 
   const recipeInstructionsHandler = (event: any) => {
@@ -23,6 +31,7 @@ const AddItem = (props: any) => {
   const [ingredients, setIngredients] = useState([] as Ingredient[]);
   const [ingredientName, setIngredientName] = useState('');
   const [ingredientQuantity, setIngredientQuantity] = useState('');
+  const [ingredientUnit, setIngredientUnit] = useState('');
 
   const ingredientNameHandler = (event: any) => {
     setIngredientName(event.target.value);
@@ -32,21 +41,33 @@ const AddItem = (props: any) => {
     setIngredientQuantity(event.target.value);
   };
 
+  const ingredientUnitHandler = (event: any) => {
+    setIngredientUnit(event.target.value);
+  };
+
   const addIngredient = (event: any) => {
     event.preventDefault();
-    const tempIngredient = {
+    const ingredient = {
       name: ingredientName,
       quantity: +ingredientQuantity,
-      unit: 'todo',
+      unit: ingredientUnit,
     } as Ingredient;
-    setIngredients([...ingredients, tempIngredient]);
+    setIngredients([...ingredients, ingredient]);
 
     setIngredientName('');
     setIngredientQuantity('');
+    setIngredientUnit('');
   };
 
   const addItem = (event: any) => {
     event.preventDefault();
+
+    setRecipeNameTouched(true);
+
+    if (!recipeIsValid) {
+      return;
+    }
+
     const recipe = {
       name: recipeName,
       description: recipeInstrcutions,
@@ -57,13 +78,14 @@ const AddItem = (props: any) => {
 
     clearForm();
     props.onClose();
+    setRecipeNameTouched(false);
   };
 
   const clearForm = () => {
     setIngredients([]);
     setRecipeName('');
     setRecipeInstructions('');
-  }
+  };
 
   return (
     <Fragment>
@@ -76,10 +98,16 @@ const AddItem = (props: any) => {
           <input
             type="text"
             id="recipe-name"
-            className="form-control"
+            className={`form-control ${
+              recipeFormIsInvalid ? 'is-invalid' : ''
+            }`}
             value={recipeName}
             onChange={recipeNameHandler}
+            onBlur={recipeNameBlurHandler}
           />
+          {recipeFormIsInvalid && (
+            <p className={classes['error-text']}>Please enter a recipe name</p>
+          )}
         </div>
         <div className="mb-3">
           <label htmlFor="recipe-instructions" className="form-label">
@@ -93,8 +121,12 @@ const AddItem = (props: any) => {
             onChange={recipeInstructionsHandler}
           />
         </div>
-        {ingredients.map((ingredient: any) => {
-          return <p key={ingredient.name}>{ingredient.name} {ingredient.quantity}</p>;
+        {ingredients.map((ingredient: any, index: number) => {
+          return (
+            <p key={index}>
+              {ingredient.name} ({ingredient.quantity} {ingredient.unit})
+            </p>
+          );
         })}
         <div className="row mb-3">
           <div className="col">
@@ -109,12 +141,25 @@ const AddItem = (props: any) => {
           </div>
           <div className="col">
             <input
-              type="text"
+              type="number"
               className="form-control"
               value={ingredientQuantity}
               onChange={ingredientQuantityHandler}
+              onKeyPress={(e) =>
+                !/^\d*\.?\d*$/.test(e.key) && e.preventDefault()
+              }
               placeholder="Ingredient quantity"
               aria-label="Ingredient quantity"
+            />
+          </div>
+          <div className="col">
+            <input
+              type="text"
+              className="form-control"
+              value={ingredientUnit}
+              onChange={ingredientUnitHandler}
+              placeholder="Ingredient unit"
+              aria-label="Ingredient unit"
             />
           </div>
           <div className="col">
@@ -123,7 +168,11 @@ const AddItem = (props: any) => {
             </button>
           </div>
         </div>
-        <button className="btn btn-primary" type="submit">
+        <button
+          disabled={recipeFormIsInvalid}
+          className="btn btn-primary"
+          type="submit"
+        >
           Add
         </button>
       </form>
