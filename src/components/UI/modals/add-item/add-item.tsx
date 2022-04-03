@@ -5,45 +5,46 @@ import classes from '../add-item/add-item.module.css';
 import { Ingredient } from '../../../../models/Ingredient';
 import { Recipe } from '../../../../models/Recipe';
 import { ActionType } from '../../../../store/app-store';
+import useInput from '../../../../hooks/useInput';
 
 const AddItem = (props: any) => {
   const dispatch = useDispatch();
-  const [recipeName, setRecipeName] = useState('');
-  const [recipeNameTouched, setRecipeNameTouched] = useState(false);
-  const [recipeInstrcutions, setRecipeInstructions] = useState('');
 
   const recipes = useSelector((state: RootStateOrAny) => state.recipes);
-  const recipeIsValid = recipeName.trim() !== '';
-  const recipeFormIsInvalid = !recipeIsValid && recipeNameTouched;
-
-  const recipeNameHandler = (event: any) => {
-    setRecipeName(event.target.value);
-  };
-
-  const recipeNameBlurHandler = (event: any) => {
-    setRecipeNameTouched(true);
-  };
-
-  const recipeInstructionsHandler = (event: any) => {
-    setRecipeInstructions(event.target.value);
-  };
-
   const [ingredients, setIngredients] = useState([] as Ingredient[]);
-  const [ingredientName, setIngredientName] = useState('');
-  const [ingredientQuantity, setIngredientQuantity] = useState('');
-  const [ingredientUnit, setIngredientUnit] = useState('');
 
-  const ingredientNameHandler = (event: any) => {
-    setIngredientName(event.target.value);
-  };
+  const {
+    inputValue: recipeName,
+    isValueValid: recipeIsValid,
+    isInputInvalid: recipeFormIsValid,
+    valueHandler: recipeNameHandler,
+    blurHandler: recipeNameBlurHandler,
+    reset: resetRecipeInput,
+  } = useInput((value: string) => value.trim() !== '');
 
-  const ingredientQuantityHandler = (event: any) => {
-    setIngredientQuantity(event.target.value);
-  };
+  const {
+    inputValue: recipeInstrcutions,
+    valueHandler: recipeInstructionsHandler,
+    reset: resetRecipeInstructionsInput,
+  } = useInput();
 
-  const ingredientUnitHandler = (event: any) => {
-    setIngredientUnit(event.target.value);
-  };
+  const {
+    inputValue: ingredientName,
+    valueHandler: ingredientNameHandler,
+    reset: resetIngredientNameInput,
+  } = useInput();
+
+  const {
+    inputValue: ingredientQuantity,
+    valueHandler: ingredientQuantityHandler,
+    reset: resetTngredientQuantityInput,
+  } = useInput();
+
+  const {
+    inputValue: ingredientUnit,
+    valueHandler: ingredientUnitHandler,
+    reset: resetIngredientUnitInput,
+  } = useInput();
 
   const addIngredient = (event: any) => {
     event.preventDefault();
@@ -54,15 +55,13 @@ const AddItem = (props: any) => {
     } as Ingredient;
     setIngredients([...ingredients, ingredient]);
 
-    setIngredientName('');
-    setIngredientQuantity('');
-    setIngredientUnit('');
+    resetIngredientNameInput();
+    resetTngredientQuantityInput();
+    resetIngredientUnitInput();
   };
 
   const addItem = (event: any) => {
     event.preventDefault();
-
-    setRecipeNameTouched(true);
 
     if (!recipeIsValid) {
       return;
@@ -78,13 +77,12 @@ const AddItem = (props: any) => {
 
     clearForm();
     props.onClose();
-    setRecipeNameTouched(false);
   };
 
   const clearForm = () => {
     setIngredients([]);
-    setRecipeName('');
-    setRecipeInstructions('');
+    resetRecipeInput();
+    resetRecipeInstructionsInput();
   };
 
   return (
@@ -98,14 +96,12 @@ const AddItem = (props: any) => {
           <input
             type="text"
             id="recipe-name"
-            className={`form-control ${
-              recipeFormIsInvalid ? 'is-invalid' : ''
-            }`}
+            className={`form-control ${recipeFormIsValid ? 'is-invalid' : ''}`}
             value={recipeName}
             onChange={recipeNameHandler}
             onBlur={recipeNameBlurHandler}
           />
-          {recipeFormIsInvalid && (
+          {recipeFormIsValid && (
             <p className={classes['error-text']}>Please enter a recipe name</p>
           )}
         </div>
@@ -169,7 +165,7 @@ const AddItem = (props: any) => {
           </div>
         </div>
         <button
-          disabled={recipeFormIsInvalid}
+          disabled={recipeFormIsValid}
           className="btn btn-primary"
           type="submit"
         >
