@@ -1,11 +1,12 @@
 import { Fragment, useState } from 'react';
 import { RootStateOrAny, useDispatch, useSelector } from 'react-redux';
 
+import AddIngredient from './add-ingredient';
 import classes from '../add-item/add-item.module.css';
+import useInput from '../../../../hooks/useInput';
 import { Ingredient } from '../../../../models/Ingredient';
 import { Recipe } from '../../../../models/Recipe';
 import { ActionType } from '../../../../store/app-store';
-import useInput from '../../../../hooks/useInput';
 
 const AddItem = (props: any) => {
   const dispatch = useDispatch();
@@ -28,36 +29,8 @@ const AddItem = (props: any) => {
     reset: resetRecipeInstructionsInput,
   } = useInput();
 
-  const {
-    inputValue: ingredientName,
-    valueHandler: ingredientNameHandler,
-    reset: resetIngredientNameInput,
-  } = useInput();
-
-  const {
-    inputValue: ingredientQuantity,
-    valueHandler: ingredientQuantityHandler,
-    reset: resetTngredientQuantityInput,
-  } = useInput();
-
-  const {
-    inputValue: ingredientUnit,
-    valueHandler: ingredientUnitHandler,
-    reset: resetIngredientUnitInput,
-  } = useInput();
-
-  const addIngredient = (event: any) => {
-    event.preventDefault();
-    const ingredient = {
-      name: ingredientName,
-      quantity: +ingredientQuantity,
-      unit: ingredientUnit,
-    } as Ingredient;
+  const addIngredient = (ingredient: Ingredient) => {
     setIngredients([...ingredients, ingredient]);
-
-    resetIngredientNameInput();
-    resetTngredientQuantityInput();
-    resetIngredientUnitInput();
   };
 
   const addItem = (event: any) => {
@@ -124,46 +97,7 @@ const AddItem = (props: any) => {
             </p>
           );
         })}
-        <div className="row mb-3">
-          <div className="col">
-            <input
-              type="text"
-              className="form-control"
-              value={ingredientName}
-              onChange={ingredientNameHandler}
-              placeholder="Ingredient name"
-              aria-label="Ingredient name"
-            />
-          </div>
-          <div className="col">
-            <input
-              type="number"
-              className="form-control"
-              value={ingredientQuantity}
-              onChange={ingredientQuantityHandler}
-              onKeyPress={(e) =>
-                !/^\d*\.?\d*$/.test(e.key) && e.preventDefault()
-              }
-              placeholder="Ingredient quantity"
-              aria-label="Ingredient quantity"
-            />
-          </div>
-          <div className="col">
-            <input
-              type="text"
-              className="form-control"
-              value={ingredientUnit}
-              onChange={ingredientUnitHandler}
-              placeholder="Ingredient unit"
-              aria-label="Ingredient unit"
-            />
-          </div>
-          <div className="col">
-            <button className="btn btn-primary" onClick={addIngredient}>
-              +
-            </button>
-          </div>
-        </div>
+        <AddIngredient addIngredient={addIngredient} />
         <button
           disabled={recipeFormIsValid}
           className="btn btn-primary"
