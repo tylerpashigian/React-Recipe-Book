@@ -49,7 +49,7 @@ const Recipes = () => {
             })}
           </DynamicGrid>
           {addingItem && (
-            <Modal onClick={toggleModal}>
+            <Modal onClick={toggleModal} modalHeader="Add Recipe">
               <AddItem onClose={toggleModal} />
             </Modal>
           )}

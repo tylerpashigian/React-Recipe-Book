@@ -5,6 +5,7 @@ const Button = (props: any) => {
     <Fragment>
       {/* TODO: replace hard coded classes with custom themes */}
       <button onClick={props.onClick} type="button" className="btn btn-primary">
+        {/* TODO: convert this to props.children? */}
         {props.buttonText}
       </button>
     </Fragment>

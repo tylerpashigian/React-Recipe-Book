@@ -35,8 +35,8 @@ const AddIngredient = (props: any) => {
     resetIngredientUnitInput();
   };
 
-  return (<div className="row mb-3">
-  <div className="col">
+  return (<div className="row mb-0 mb-md-3">
+  <div className="col-md-3 mb-3 mb-md-0">
     <input
       type="text"
       className="form-control"
@@ -46,7 +46,7 @@ const AddIngredient = (props: any) => {
       aria-label="Ingredient name"
     />
   </div>
-  <div className="col">
+  <div className="col-md-3 mb-3 mb-md-0">
     <input
       type="number"
       className="form-control"
@@ -59,7 +59,7 @@ const AddIngredient = (props: any) => {
       aria-label="Ingredient quantity"
     />
   </div>
-  <div className="col">
+  <div className="col-md-3 mb-3 mb-md-0">
     <input
       type="text"
       className="form-control"
@@ -69,7 +69,7 @@ const AddIngredient = (props: any) => {
       aria-label="Ingredient unit"
     />
   </div>
-  <div className="col">
+  <div className="col mb-3 mb-md-0">
     <button className="btn btn-primary" onClick={addIngredient}>
       +
     </button>

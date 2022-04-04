@@ -60,7 +60,6 @@ const AddItem = (props: any) => {
 
   return (
     <Fragment>
-      <h3>Add Recipe</h3>
       <form onSubmit={addItem}>
         <div className="mb-3">
           <label htmlFor="recipe-name" className="form-label">
