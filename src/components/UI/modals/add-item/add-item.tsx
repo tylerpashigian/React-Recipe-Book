@@ -24,6 +24,12 @@ const AddItem = (props: any) => {
   } = useInput((value: string) => value.trim() !== '');
 
   const {
+    inputValue: recipeDescription,
+    valueHandler: recipeDescriptionHandler,
+    reset: resetRecipeDescriptionInput,
+  } = useInput();
+
+  const {
     inputValue: recipeInstrcutions,
     valueHandler: recipeInstructionsHandler,
     reset: resetRecipeInstructionsInput,
@@ -42,7 +48,8 @@ const AddItem = (props: any) => {
 
     const recipe = {
       name: recipeName,
-      description: recipeInstrcutions,
+      description: recipeDescription,
+      instructions: recipeInstrcutions,
       id: recipes.length + 1,
       ingredients: ingredients,
     } as Recipe;
@@ -55,6 +62,7 @@ const AddItem = (props: any) => {
   const clearForm = () => {
     setIngredients([]);
     resetRecipeInput();
+    resetRecipeDescriptionInput();
     resetRecipeInstructionsInput();
   };
 
@@ -76,6 +84,18 @@ const AddItem = (props: any) => {
           {recipeFormIsValid && (
             <p className={classes['error-text']}>Please enter a recipe name</p>
           )}
+        </div>
+        <div className="mb-3">
+          <label htmlFor="recipe-description" className="form-label">
+            Recipe Description
+          </label>
+          <input
+            type="text"
+            id="recipe-description"
+            className="form-control"
+            value={recipeDescription}
+            onChange={recipeDescriptionHandler}
+          />
         </div>
         <div className="mb-3">
           <label htmlFor="recipe-instructions" className="form-label">

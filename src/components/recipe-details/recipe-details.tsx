@@ -20,7 +20,12 @@ const RecipeDetails = () => {
       {recipe && (
         <Fragment>
           <h3>{recipe.name}</h3>
-          <p className={classes.recipeInstructions}>{recipe.description}</p>
+          {recipe.description && (
+            <p className={classes.recipeDescription}>{recipe.description}</p>
+          )}
+          {recipe.instructions && (
+            <p className={classes.recipeInstructions}>{recipe.instructions}</p>
+          )}
           {recipe.ingredients.map((ingredient: Ingredient, index: number) => {
             return (
               <li key={index}>
