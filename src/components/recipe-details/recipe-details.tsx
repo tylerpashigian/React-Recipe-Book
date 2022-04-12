@@ -1,14 +1,15 @@
 import { Fragment } from 'react';
-import { useParams } from "react-router-dom";
+import { useParams } from 'react-router-dom';
 
 import classes from './recipe-details.module.css';
 import { Ingredient } from '../../models/Ingredient';
-import { mockRecipes } from '../../mocks/mockRecipes';
+import { RootStateOrAny, useSelector } from 'react-redux';
 
 const RecipeDetails = () => {
   const params = useParams();
-  // Replace this with an API request/database call once I have actual data
-  const recipe = mockRecipes[+(params.recipeId || 0) - 1];
+  // TODO: Replace this with an API request/database call once I have actual data
+  const recipes = useSelector((state: RootStateOrAny) => state.recipes);
+  const recipe = recipes[+(params.recipeId || 0) - 1];
   return (
     <Fragment>
       {!recipe && (
@@ -19,9 +20,18 @@ const RecipeDetails = () => {
       {recipe && (
         <Fragment>
           <h3>{recipe.name}</h3>
-          <p>{recipe.description}</p>
-          {recipe.ingredients.map((ingredient: Ingredient) => {
-            return <li key={ingredient.name}>{ingredient.name}</li>;
+          {recipe.description && (
+            <p className={classes.recipeDescription}>{recipe.description}</p>
+          )}
+          {recipe.instructions && (
+            <p className={classes.recipeInstructions}>{recipe.instructions}</p>
+          )}
+          {recipe.ingredients.map((ingredient: Ingredient, index: number) => {
+            return (
+              <li key={index}>
+                {ingredient.name} ({ingredient.quantity} {ingredient.unit})
+              </li>
+            );
           })}
         </Fragment>
       )}
