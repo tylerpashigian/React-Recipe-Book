@@ -1,18 +1,21 @@
 import { Fragment, useState } from 'react';
 import { RootStateOrAny, useDispatch, useSelector } from 'react-redux';
 
-import AddIngredient from './add-ingredient';
-import classes from '../add-item/add-item.module.css';
+import classes from '../recipe-form/recipe-form.module.css';
 import useInput from '../../../../hooks/useInput';
 import { Ingredient } from '../../../../models/Ingredient';
 import { Recipe } from '../../../../models/Recipe';
 import { ActionType } from '../../../../store/app-store';
+import { DetailsPageType } from '../../../recipe-details/recipe-details';
+import IngredientForm from './ingredient-form';
 
-const AddItem = (props: any) => {
+const RecipeForm = (props: any) => {
   const dispatch = useDispatch();
 
   const recipes = useSelector((state: RootStateOrAny) => state.recipes);
-  const [ingredients, setIngredients] = useState([] as Ingredient[]);
+  const [ingredients, setIngredients] = useState(
+    props.recipe?.ingredients || ([] as Ingredient[])
+  );
 
   const {
     inputValue: recipeName,
@@ -21,19 +24,19 @@ const AddItem = (props: any) => {
     valueHandler: recipeNameHandler,
     blurHandler: recipeNameBlurHandler,
     reset: resetRecipeInput,
-  } = useInput((value: string) => value.trim() !== '');
+  } = useInput((value: string) => value.trim() !== '', props.recipe?.name);
 
   const {
     inputValue: recipeDescription,
     valueHandler: recipeDescriptionHandler,
     reset: resetRecipeDescriptionInput,
-  } = useInput();
+  } = useInput(() => {}, props.recipe?.description);
 
   const {
     inputValue: recipeInstrcutions,
     valueHandler: recipeInstructionsHandler,
     reset: resetRecipeInstructionsInput,
-  } = useInput();
+  } = useInput(() => {}, props.recipe?.instructions);
 
   const addIngredient = (ingredient: Ingredient) => {
     setIngredients([...ingredients, ingredient]);
@@ -50,10 +53,20 @@ const AddItem = (props: any) => {
       name: recipeName,
       description: recipeDescription,
       instructions: recipeInstrcutions,
-      id: recipes.length + 1,
+      id:
+        props.viewState === DetailsPageType.Edit
+          ? props.recipe?.id || 0
+          : recipes.length + 1,
       ingredients: ingredients,
     } as Recipe;
-    dispatch({ type: ActionType.AddRecipe, payload: recipe });
+
+    dispatch({
+      type:
+        props.viewState === DetailsPageType.Edit
+          ? ActionType.UpdateRecipe
+          : ActionType.AddRecipe,
+      payload: recipe,
+    });
 
     clearForm();
     props.onClose();
@@ -116,17 +129,17 @@ const AddItem = (props: any) => {
             </p>
           );
         })}
-        <AddIngredient addIngredient={addIngredient} />
+        <IngredientForm addIngredient={addIngredient} />
         <button
           disabled={recipeFormIsValid}
           className="btn btn-primary"
           type="submit"
         >
-          Add
+          {props.viewState === DetailsPageType.Edit ? 'Save' : 'Add'}
         </button>
       </form>
     </Fragment>
   );
 };
 
-export default AddItem;
+export default RecipeForm;
