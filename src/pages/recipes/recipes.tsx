@@ -9,8 +9,8 @@ import DynamicGrid from '../../components/dynamin-grid/dynamic-grid';
 import { ActionType } from '../../store/app-store';
 import { mockRecipes } from '../../mocks/mockRecipes';
 import Modal from '../../components/UI/modals/modal/modal';
-import AddItem from '../../components/UI/modals/add-item/add-item';
 import Button from '../../components/UI/button/button';
+import RecipeForm from '../../components/UI/forms/recipe-form/recipe-form';
 
 const Recipes = () => {
   const dispatch = useDispatch();
@@ -30,7 +30,7 @@ const Recipes = () => {
   }, [dispatch, recipes]);
 
   const toggleModal = () => {
-    setAddingItem(previousAddingItem => !previousAddingItem);
+    setAddingItem((previousAddingItem) => !previousAddingItem);
   };
 
   return (
@@ -50,7 +50,7 @@ const Recipes = () => {
           </DynamicGrid>
           {addingItem && (
             <Modal onClick={toggleModal} modalHeader="Add Recipe">
-              <AddItem onClose={toggleModal} />
+              <RecipeForm onClose={toggleModal} />
             </Modal>
           )}
           <div className={classes['add-button']}>

@@ -8,3 +8,9 @@
 .recipeInstructions {
   white-space: pre-line;
 }
+
+.edit-save-button {
+  position: fixed;
+  right: 16px;
+  bottom: 16px;
+}
