@@ -7,10 +7,10 @@ import { Recipe } from '../../models/Recipe';
 import Card from '../../components/card/card';
 import DynamicGrid from '../../components/dynamin-grid/dynamic-grid';
 import { ActionType } from '../../store/app-store';
-import { mockRecipes } from '../../mocks/mockRecipes';
 import Modal from '../../components/UI/modals/modal/modal';
 import Button from '../../components/UI/button/button';
 import RecipeForm from '../../components/UI/forms/recipe-form/recipe-form';
+import Constants from '../../utils/constants';
 
 const Recipes = () => {
   const dispatch = useDispatch();
@@ -20,12 +20,34 @@ const Recipes = () => {
 
   useEffect(() => {
     if (!recipes.length) {
-      // Demo to represent loading functionality until I get a database set up
       setIsLoading(true);
-      setTimeout(() => {
-        setIsLoading(false);
-        dispatch({ type: ActionType.SetRecipes, payload: [...mockRecipes] });
-      }, 1000);
+      // setError(false);
+      fetch(`${Constants.RECIPE_BOOK_HOST}/recipes`)
+        .then((res) => res.json())
+        .then(
+          (result: any) => {
+            let recipes: Recipe[] = [];
+            result.forEach((recipe: any) => {
+              recipes.push({
+                id: recipe._id,
+                name: recipe.name,
+                ingredients: recipe.ingredients,
+              });
+            });
+            dispatch({ type: ActionType.SetRecipes, payload: [...recipes] });
+            setIsLoading(false);
+          },
+          (error) => {
+            console.log(error);
+            setIsLoading(false);
+            // setError(true);
+          }
+        )
+        .catch((error) => {
+          console.log(error);
+          setIsLoading(false);
+          // setError(true);
+        });
     }
   }, [dispatch, recipes]);
 
