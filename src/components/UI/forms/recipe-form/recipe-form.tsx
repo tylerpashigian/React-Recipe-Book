@@ -1,5 +1,5 @@
 import { Fragment, useState } from 'react';
-import { RootStateOrAny, useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 
 import classes from '../recipe-form/recipe-form.module.css';
 import useInput from '../../../../hooks/useInput';
@@ -8,11 +8,11 @@ import { Recipe } from '../../../../models/Recipe';
 import { ActionType } from '../../../../store/app-store';
 import { DetailsPageType } from '../../../recipe-details/recipe-details';
 import IngredientForm from './ingredient-form';
+import Constants from '../../../../utils/constants';
 
 const RecipeForm = (props: any) => {
   const dispatch = useDispatch();
 
-  const recipes = useSelector((state: RootStateOrAny) => state.recipes);
   const [ingredients, setIngredients] = useState(
     props.recipe?.ingredients || ([] as Ingredient[])
   );
@@ -42,6 +42,32 @@ const RecipeForm = (props: any) => {
     setIngredients([...ingredients, ingredient]);
   };
 
+  const submitRecipe = (recipe: any, id?: number) => {
+    const method = id ? 'PUT' : 'POST';
+    const dataUri = id
+      ? `${Constants.RECIPE_BOOK_HOST}/recipe/${id}`
+      : `${Constants.RECIPE_BOOK_HOST}/recipe/add`;
+
+    fetch(dataUri, {
+      method: method,
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(recipe),
+    })
+      .then((response) => response.json())
+      .then((data: Recipe) => {
+        dispatch({
+          type:
+            props.viewState === DetailsPageType.Edit
+              ? ActionType.UpdateRecipe
+              : ActionType.AddRecipe,
+          payload: data,
+        });
+      })
+      .catch((error) => {
+        console.error('Error:', error);
+      });
+  };
+
   const addItem = (event: any) => {
     event.preventDefault();
 
@@ -53,23 +79,13 @@ const RecipeForm = (props: any) => {
       name: recipeName,
       description: recipeDescription,
       instructions: recipeInstrcutions,
-      id:
-        props.viewState === DetailsPageType.Edit
-          ? props.recipe?.id || 0
-          : recipes.length + 1,
       ingredients: ingredients,
-    } as Recipe;
+    };
 
-    dispatch({
-      type:
-        props.viewState === DetailsPageType.Edit
-          ? ActionType.UpdateRecipe
-          : ActionType.AddRecipe,
-      payload: recipe,
-    });
+    submitRecipe(recipe, props.recipe?._id);
 
     clearForm();
-    props.onClose();
+    props.onClose({ id: props.recipe?._id, ...recipe });
   };
 
   const clearForm = () => {

@@ -3,9 +3,10 @@ import { useParams } from 'react-router-dom';
 
 import classes from './recipe-details.module.css';
 import { Ingredient } from '../../models/Ingredient';
-import { RootStateOrAny, useSelector } from 'react-redux';
 import Button from '../UI/button/button';
 import RecipeForm from '../UI/forms/recipe-form/recipe-form';
+import { Recipe } from '../../models/Recipe';
+import Constants from '../../utils/constants';
 
 export enum DetailsPageType {
   Details,
@@ -14,10 +15,9 @@ export enum DetailsPageType {
 
 const RecipeDetails = () => {
   const params = useParams();
-  // TODO: Replace this with an API request/database call once I have actual data
-  const recipes = useSelector((state: RootStateOrAny) => state.recipes);
 
-  const [recipe, setRecipe] = useState(recipes[+(params.recipeId || 0) - 1]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [recipe, setRecipe] = useState(null as Recipe | null);
   const [viewState, setViewState] = useState(DetailsPageType.Details);
 
   const toggleViewState = () => {
@@ -28,18 +28,37 @@ const RecipeDetails = () => {
     );
   };
 
+  const closeModal = (recipe: Recipe) => {
+    setRecipe(recipe);
+    toggleViewState();
+  };
+
   useEffect(() => {
-    setRecipe(recipes[+(params.recipeId || 0) - 1]);
-  }, [recipes, params.recipeId]);
+    setIsLoading(true);
+    fetch(`${Constants.RECIPE_BOOK_HOST}/recipe/${params.recipeId}`)
+      .then((res) => res.json())
+      .then(
+        (recipe: Recipe) => {
+          setRecipe(recipe);
+          setIsLoading(false);
+        },
+        (error) => {
+          console.log(error);
+          setIsLoading(false);
+          // setError(true);
+        }
+      )
+      .catch((error) => {
+        console.log(error);
+        setIsLoading(false);
+        // setError(true);
+      });
+  }, [params.recipeId]);
 
   return (
     <>
-      {!recipe && (
-        <div className={classes.noRecipe}>
-          <p>Recipe Does Not Exist</p>
-        </div>
-      )}
-      {recipe && (
+      {isLoading && <h3>Loading...</h3>}
+      {recipe && !isLoading && (
         <>
           {viewState === DetailsPageType.Details && (
             <>
@@ -70,7 +89,7 @@ const RecipeDetails = () => {
             <RecipeForm
               recipe={recipe}
               viewState={viewState}
-              onClose={toggleViewState}
+              onClose={closeModal}
             ></RecipeForm>
           )}
           <div className={classes['edit-save-button']}>
@@ -82,6 +101,11 @@ const RecipeDetails = () => {
             ></Button>
           </div>
         </>
+      )}
+      {!recipe && !isLoading && (
+        <div className={classes.noRecipe}>
+          <p>Recipe Does Not Exist</p>
+        </div>
       )}
     </>
   );

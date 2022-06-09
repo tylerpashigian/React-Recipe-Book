@@ -1,4 +1,5 @@
 import { createStore } from 'redux';
+import { RecipePreview } from '../models/Recipe';
 
 export enum ActionType {
   AddRecipe,
@@ -22,7 +23,10 @@ const reducer = (state: any = initalState, action: any) => {
       };
     case ActionType.UpdateRecipe:
       let updatedRecipes = [...state.recipes];
-      updatedRecipes[action.payload.id - 1] = action.payload;
+      const index = updatedRecipes.findIndex(
+        (recipe: RecipePreview) => recipe.id === action.payload.id
+      );
+      updatedRecipes[index] = action.payload;
       return {
         recipes: updatedRecipes,
       };
