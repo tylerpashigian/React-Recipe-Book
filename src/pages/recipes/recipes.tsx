@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { RootStateOrAny, useDispatch, useSelector } from 'react-redux';
 
 import classes from './recipes.module.css';
-import { Recipe } from '../../models/Recipe';
+import { RecipePreview } from '../../models/Recipe';
 import Card from '../../components/card/card';
 import DynamicGrid from '../../components/dynamin-grid/dynamic-grid';
 import { ActionType } from '../../store/app-store';
@@ -26,12 +26,11 @@ const Recipes = () => {
         .then((res) => res.json())
         .then(
           (result: any) => {
-            let recipes: Recipe[] = [];
+            let recipes: RecipePreview[] = [];
             result.forEach((recipe: any) => {
               recipes.push({
                 id: recipe._id,
                 name: recipe.name,
-                ingredients: recipe.ingredients,
               });
             });
             dispatch({ type: ActionType.SetRecipes, payload: [...recipes] });
@@ -62,7 +61,7 @@ const Recipes = () => {
         <Fragment>
           <h2>Recipes</h2>
           <DynamicGrid cols={3}>
-            {recipes.map((recipe: Recipe, index: number) => {
+            {recipes.map((recipe: RecipePreview, index: number) => {
               return (
                 <Link key={recipe.id} to={`${recipe.id}`}>
                   <Card name={recipe.name} />
