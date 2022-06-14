@@ -45,8 +45,8 @@ const RecipeForm = (props: any) => {
   const submitRecipe = (recipe: any, id?: number) => {
     const method = id ? 'PUT' : 'POST';
     const dataUri = id
-      ? `${Constants.RECIPE_BOOK_HOST}/recipe/${id}`
-      : `${Constants.RECIPE_BOOK_HOST}/recipe/add`;
+      ? `${Constants.RECIPE_BOOK_HOST}/recipes/recipe/${id}`
+      : `${Constants.RECIPE_BOOK_HOST}/recipes/recipe/add`;
 
     fetch(dataUri, {
       method: method,

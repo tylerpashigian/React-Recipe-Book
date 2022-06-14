@@ -3,6 +3,7 @@ import { RecipePreview } from '../models/Recipe';
 
 export enum ActionType {
   AddRecipe,
+  DeleteRecipe,
   SetRecipes,
   UpdateRecipe,
 }
@@ -16,6 +17,15 @@ const reducer = (state: any = initalState, action: any) => {
     case ActionType.AddRecipe:
       return {
         recipes: [...state.recipes, action.payload],
+      };
+    case ActionType.DeleteRecipe:
+      let recipesCopy = [...state.recipes];
+      const indexToDelete = recipesCopy.findIndex(
+        (recipe: RecipePreview) => recipe.id === action.payload.id
+      );
+      recipesCopy.splice(indexToDelete, 1);
+      return {
+        recipes: recipesCopy,
       };
     case ActionType.SetRecipes:
       return {

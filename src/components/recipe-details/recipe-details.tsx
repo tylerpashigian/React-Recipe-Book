@@ -7,6 +7,8 @@ import Button from '../UI/button/button';
 import RecipeForm from '../UI/forms/recipe-form/recipe-form';
 import { Recipe } from '../../models/Recipe';
 import Constants from '../../utils/constants';
+import Modal from '../UI/modals/modal/modal';
+import DeleteForm from '../UI/forms/delete-form/delete-form';
 
 export enum DetailsPageType {
   Details,
@@ -16,6 +18,7 @@ export enum DetailsPageType {
 const RecipeDetails = () => {
   const params = useParams();
 
+  const [deletingRecipe, setDeletingRecipe] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [recipe, setRecipe] = useState(null as Recipe | null);
   const [viewState, setViewState] = useState(DetailsPageType.Details);
@@ -33,9 +36,13 @@ const RecipeDetails = () => {
     toggleViewState();
   };
 
+  const toggleDelete = () => {
+    setDeletingRecipe((previousState) => !previousState);
+  };
+
   useEffect(() => {
     setIsLoading(true);
-    fetch(`${Constants.RECIPE_BOOK_HOST}/recipe/${params.recipeId}`)
+    fetch(`${Constants.RECIPE_BOOK_HOST}/recipes/recipe/${params.recipeId}`)
       .then((res) => res.json())
       .then(
         (recipe: Recipe) => {
@@ -83,6 +90,14 @@ const RecipeDetails = () => {
                   );
                 }
               )}
+              {deletingRecipe && (
+                <Modal onClick={toggleDelete} modalHeader="Delete Recipe">
+                  <DeleteForm
+                    cancel={toggleDelete}
+                    recipeId={params.recipeId}
+                  />
+                </Modal>
+              )}
             </>
           )}
           {viewState === DetailsPageType.Edit && (
@@ -93,6 +108,13 @@ const RecipeDetails = () => {
             ></RecipeForm>
           )}
           <div className={classes['edit-save-button']}>
+            {viewState === DetailsPageType.Details && (
+              <Button
+                onClick={toggleDelete}
+                buttonText="Delete"
+                buttonStyle="btn btn-danger"
+              ></Button>
+            )}
             <Button
               onClick={toggleViewState}
               buttonText={
