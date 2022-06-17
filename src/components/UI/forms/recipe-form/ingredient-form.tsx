@@ -1,3 +1,5 @@
+import { v4 as uuidv4 } from 'uuid';
+
 import useInput from '../../../../hooks/useInput';
 import { Ingredient } from '../../../../models/Ingredient';
 
@@ -23,6 +25,7 @@ const IngredientForm = (props: any) => {
   const addIngredient = (event: any) => {
     event.preventDefault();
     const ingredient = {
+      id: uuidv4(),
       name: ingredientName,
       quantity: +ingredientQuantity,
       unit: ingredientUnit,

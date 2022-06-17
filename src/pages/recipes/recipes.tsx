@@ -61,7 +61,7 @@ const Recipes = () => {
         <Fragment>
           <h2>Recipes</h2>
           <DynamicGrid cols={3}>
-            {recipes.map((recipe: RecipePreview, index: number) => {
+            {recipes.map((recipe: RecipePreview) => {
               return (
                 <Link key={recipe.id} to={`${recipe.id}`}>
                   <Card name={recipe.name} />

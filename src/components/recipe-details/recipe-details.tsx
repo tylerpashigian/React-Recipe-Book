@@ -83,7 +83,7 @@ const RecipeDetails = () => {
               {recipe.ingredients.map(
                 (ingredient: Ingredient, index: number) => {
                   return (
-                    <li key={index}>
+                    <li key={ingredient.id}>
                       {ingredient.name} ({ingredient.quantity} {ingredient.unit}
                       )
                     </li>

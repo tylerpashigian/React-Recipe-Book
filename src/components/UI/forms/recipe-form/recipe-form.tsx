@@ -140,7 +140,7 @@ const RecipeForm = (props: any) => {
         </div>
         {ingredients.map((ingredient: any, index: number) => {
           return (
-            <p key={index}>
+            <p key={ingredient.id}>
               {ingredient.name} ({ingredient.quantity} {ingredient.unit})
             </p>
           );
