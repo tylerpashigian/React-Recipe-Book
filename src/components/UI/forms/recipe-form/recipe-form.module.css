@@ -1,3 +1,11 @@
 .error-text {
   color: #b40e0e;
 }
+
+.ingredient {
+  display: flex;
+}
+
+.ingredient > * {
+  padding-right: 8px;
+}

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 const useInput = (isValid: any = () => {}, value: string = '') => {
   const [inputValue, setInputValue] = useState(value);
@@ -6,6 +6,10 @@ const useInput = (isValid: any = () => {}, value: string = '') => {
 
   const isValueValid = isValid(inputValue);
   const isInputInvalid = !isValueValid && inputTouched;
+
+  useEffect(() => {
+    setInputValue(value);
+  }, [value]);
 
   const valueHandler = (event: any) => {
     setInputValue(event.target.value);

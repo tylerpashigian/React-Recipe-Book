@@ -1,6 +1,10 @@
 import { Fragment, useState } from 'react';
 import { useDispatch } from 'react-redux';
 
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faClose } from '@fortawesome/free-solid-svg-icons';
+import { faEdit } from '@fortawesome/free-solid-svg-icons';
+
 import classes from '../recipe-form/recipe-form.module.css';
 import useInput from '../../../../hooks/useInput';
 import { Ingredient } from '../../../../models/Ingredient';
@@ -15,6 +19,9 @@ const RecipeForm = (props: any) => {
 
   const [ingredients, setIngredients] = useState(
     props.recipe?.ingredients || ([] as Ingredient[])
+  );
+  const [editableIngredient, setEditableIngredient] = useState(
+    null as Ingredient | null
   );
 
   const {
@@ -88,6 +95,18 @@ const RecipeForm = (props: any) => {
     props.onClose({ id: props.recipe?._id, ...recipe });
   };
 
+  const editIngredient = (ingredient: Ingredient) => {
+    setEditableIngredient(ingredient);
+    deleteIngredient(ingredient.id);
+  };
+
+  const deleteIngredient = (id: string) => {
+    const updatedIngredients = [...ingredients].filter(
+      (ingredient: Ingredient) => ingredient.id !== id
+    );
+    setIngredients(updatedIngredients);
+  };
+
   const clearForm = () => {
     setIngredients([]);
     resetRecipeInput();
@@ -140,12 +159,23 @@ const RecipeForm = (props: any) => {
         </div>
         {ingredients.map((ingredient: any, index: number) => {
           return (
-            <p key={ingredient.id}>
-              {ingredient.name} ({ingredient.quantity} {ingredient.unit})
-            </p>
+            <div key={ingredient.id} className={classes.ingredient}>
+              <p>
+                {ingredient.name} ({ingredient.quantity} {ingredient.unit})
+              </p>
+              <div onClick={() => deleteIngredient(ingredient.id)}>
+                <FontAwesomeIcon icon={faClose} />
+              </div>
+              <div onClick={() => editIngredient(ingredient)}>
+                <FontAwesomeIcon icon={faEdit} />
+              </div>
+            </div>
           );
         })}
-        <IngredientForm addIngredient={addIngredient} />
+        <IngredientForm
+          addIngredient={addIngredient}
+          ingredient={editableIngredient}
+        />
         <button
           disabled={recipeFormIsValid}
           className="btn btn-primary"

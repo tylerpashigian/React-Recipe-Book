@@ -8,19 +8,19 @@ const IngredientForm = (props: any) => {
     inputValue: ingredientName,
     valueHandler: ingredientNameHandler,
     reset: resetIngredientNameInput,
-  } = useInput();
+  } = useInput(() => {}, props.ingredient?.name);
 
   const {
     inputValue: ingredientQuantity,
     valueHandler: ingredientQuantityHandler,
     reset: resetTngredientQuantityInput,
-  } = useInput();
+  } = useInput(() => {}, props.ingredient?.quantity);
 
   const {
     inputValue: ingredientUnit,
     valueHandler: ingredientUnitHandler,
     reset: resetIngredientUnitInput,
-  } = useInput();
+  } = useInput(() => {}, props.ingredient?.unit);
 
   const addIngredient = (event: any) => {
     event.preventDefault();
