@@ -15,6 +15,11 @@ export enum DetailsPageType {
   Edit,
 }
 
+export enum IngredientType {
+  Add,
+  Edit,
+}
+
 const RecipeDetails = () => {
   const params = useParams();
 

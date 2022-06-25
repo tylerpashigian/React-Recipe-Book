@@ -10,7 +10,10 @@ import useInput from '../../../../hooks/useInput';
 import { Ingredient } from '../../../../models/Ingredient';
 import { Recipe } from '../../../../models/Recipe';
 import { ActionType } from '../../../../store/app-store';
-import { DetailsPageType } from '../../../recipe-details/recipe-details';
+import {
+  DetailsPageType,
+  IngredientType,
+} from '../../../recipe-details/recipe-details';
 import IngredientForm from './ingredient-form';
 import Constants from '../../../../utils/constants';
 
@@ -22,6 +25,9 @@ const RecipeForm = (props: any) => {
   );
   const [editableIngredient, setEditableIngredient] = useState(
     null as Ingredient | null
+  );
+  const [ingredientFormState, setIngredientFormState] = useState(
+    IngredientType.Add
   );
 
   const {
@@ -96,8 +102,28 @@ const RecipeForm = (props: any) => {
   };
 
   const editIngredient = (ingredient: Ingredient) => {
+    setIngredientFormState(IngredientType.Edit);
     setEditableIngredient(ingredient);
-    deleteIngredient(ingredient.id);
+  };
+
+  const updateIngredient = (updatedIngredient: Ingredient) => {
+    const newIngredients = props.recipe.ingredients.map(
+      (ingredient: Ingredient) => {
+        return editableIngredient?.id === ingredient.id
+          ? updatedIngredient
+          : ingredient;
+      }
+    );
+
+    setIngredients(newIngredients);
+
+    // submitRecipe(
+    //   { ...props.recipe, ingredients: newIngredients },
+    //   props.recipe?._id
+    // );
+
+    setEditableIngredient(null);
+    setIngredientFormState(IngredientType.Add);
   };
 
   const deleteIngredient = (id: string) => {
@@ -175,6 +201,8 @@ const RecipeForm = (props: any) => {
         <IngredientForm
           addIngredient={addIngredient}
           ingredient={editableIngredient}
+          viewState={ingredientFormState}
+          updateIngredient={updateIngredient}
         />
         <button
           disabled={recipeFormIsValid}

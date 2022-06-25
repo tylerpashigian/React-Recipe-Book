@@ -1,7 +1,9 @@
+import { useDispatch } from 'react-redux';
 import { v4 as uuidv4 } from 'uuid';
 
 import useInput from '../../../../hooks/useInput';
 import { Ingredient } from '../../../../models/Ingredient';
+import { IngredientType } from '../../../recipe-details/recipe-details';
 
 const IngredientForm = (props: any) => {
   const {
@@ -32,7 +34,21 @@ const IngredientForm = (props: any) => {
     } as Ingredient;
 
     props.addIngredient(ingredient);
+    resetForm();
+  };
 
+  const updateIngredient = (event: any) => {
+    event.preventDefault();
+    props.updateIngredient({
+      id: props.ingredient.id,
+      name: ingredientName,
+      quantity: +ingredientQuantity,
+      unit: ingredientUnit,
+    });
+    resetForm();
+  };
+
+  const resetForm = () => {
     resetIngredientNameInput();
     resetTngredientQuantityInput();
     resetIngredientUnitInput();
@@ -72,8 +88,15 @@ const IngredientForm = (props: any) => {
         />
       </div>
       <div className="col mb-3 mb-md-0">
-        <button className="btn btn-primary" onClick={addIngredient}>
-          +
+        <button
+          className="btn btn-primary"
+          onClick={
+            props.viewState === IngredientType.Edit
+              ? updateIngredient
+              : addIngredient
+          }
+        >
+          {props.viewState === IngredientType.Edit ? 'Update' : '+'}
         </button>
       </div>
     </div>
