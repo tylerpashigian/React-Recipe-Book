@@ -85,16 +85,13 @@ const RecipeDetails = () => {
                   {recipe.instructions}
                 </p>
               )}
-              {recipe.ingredients.map(
-                (ingredient: Ingredient, index: number) => {
-                  return (
-                    <li key={ingredient.id}>
-                      {ingredient.name} ({ingredient.quantity} {ingredient.unit}
-                      )
-                    </li>
-                  );
-                }
-              )}
+              {recipe.ingredients.map((ingredient: Ingredient) => {
+                return (
+                  <li key={ingredient.id}>
+                    {ingredient.name} ({ingredient.quantity} {ingredient.unit})
+                  </li>
+                );
+              })}
               {deletingRecipe && (
                 <Modal onClick={toggleDelete} modalHeader="Delete Recipe">
                   <DeleteForm
