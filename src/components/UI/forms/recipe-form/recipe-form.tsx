@@ -107,13 +107,11 @@ const RecipeForm = (props: any) => {
   };
 
   const updateIngredient = (updatedIngredient: Ingredient) => {
-    const newIngredients = props.recipe.ingredients.map(
-      (ingredient: Ingredient) => {
-        return editableIngredient?.id === ingredient.id
-          ? updatedIngredient
-          : ingredient;
-      }
-    );
+    const newIngredients = [...ingredients].map((ingredient: Ingredient) => {
+      return editableIngredient?.id === ingredient.id
+        ? updatedIngredient
+        : ingredient;
+    });
 
     setIngredients(newIngredients);
 
@@ -183,7 +181,7 @@ const RecipeForm = (props: any) => {
             onChange={recipeInstructionsHandler}
           />
         </div>
-        {ingredients.map((ingredient: any, index: number) => {
+        {ingredients.map((ingredient: any) => {
           return (
             <div key={ingredient.id} className={classes.ingredient}>
               <p>
