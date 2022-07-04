@@ -1,10 +1,16 @@
 import { Fragment } from 'react';
 
 const Button = (props: any) => {
+  const buttonStyle = props.buttonStyle ?? 'btn btn-primary';
+  const buttonType = props.type ?? 'button';
+
   return (
     <Fragment>
-      {/* TODO: replace hard coded classes with custom themes */}
-      <button onClick={props.onClick} type="button" className="btn btn-primary">
+      <button
+        onClick={props.onClick}
+        type={buttonType}
+        className={`${buttonStyle}`}
+      >
         {/* TODO: convert this to props.children? */}
         {props.buttonText}
       </button>

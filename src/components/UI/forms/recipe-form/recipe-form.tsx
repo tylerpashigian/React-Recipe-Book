@@ -1,20 +1,33 @@
 import { Fragment, useState } from 'react';
-import { RootStateOrAny, useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
+
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faClose } from '@fortawesome/free-solid-svg-icons';
+import { faEdit } from '@fortawesome/free-solid-svg-icons';
 
 import classes from '../recipe-form/recipe-form.module.css';
 import useInput from '../../../../hooks/useInput';
 import { Ingredient } from '../../../../models/Ingredient';
 import { Recipe } from '../../../../models/Recipe';
 import { ActionType } from '../../../../store/app-store';
-import { DetailsPageType } from '../../../recipe-details/recipe-details';
+import {
+  DetailsPageType,
+  IngredientType,
+} from '../../../recipe-details/recipe-details';
 import IngredientForm from './ingredient-form';
+import Constants from '../../../../utils/constants';
 
 const RecipeForm = (props: any) => {
   const dispatch = useDispatch();
 
-  const recipes = useSelector((state: RootStateOrAny) => state.recipes);
   const [ingredients, setIngredients] = useState(
     props.recipe?.ingredients || ([] as Ingredient[])
+  );
+  const [editableIngredient, setEditableIngredient] = useState(
+    null as Ingredient | null
+  );
+  const [ingredientFormState, setIngredientFormState] = useState(
+    IngredientType.Add
   );
 
   const {
@@ -42,6 +55,32 @@ const RecipeForm = (props: any) => {
     setIngredients([...ingredients, ingredient]);
   };
 
+  const submitRecipe = (recipe: any, id?: number) => {
+    const method = id ? 'PUT' : 'POST';
+    const dataUri = id
+      ? `${Constants.RECIPE_BOOK_HOST}/recipes/recipe/${id}`
+      : `${Constants.RECIPE_BOOK_HOST}/recipes/recipe/add`;
+
+    fetch(dataUri, {
+      method: method,
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(recipe),
+    })
+      .then((response) => response.json())
+      .then((data: Recipe) => {
+        dispatch({
+          type:
+            props.viewState === DetailsPageType.Edit
+              ? ActionType.UpdateRecipe
+              : ActionType.AddRecipe,
+          payload: data,
+        });
+      })
+      .catch((error) => {
+        console.error('Error:', error);
+      });
+  };
+
   const addItem = (event: any) => {
     event.preventDefault();
 
@@ -53,23 +92,43 @@ const RecipeForm = (props: any) => {
       name: recipeName,
       description: recipeDescription,
       instructions: recipeInstrcutions,
-      id:
-        props.viewState === DetailsPageType.Edit
-          ? props.recipe?.id || 0
-          : recipes.length + 1,
       ingredients: ingredients,
-    } as Recipe;
+    };
 
-    dispatch({
-      type:
-        props.viewState === DetailsPageType.Edit
-          ? ActionType.UpdateRecipe
-          : ActionType.AddRecipe,
-      payload: recipe,
-    });
+    submitRecipe(recipe, props.recipe?._id);
 
     clearForm();
-    props.onClose();
+    props.onClose({ id: props.recipe?._id, ...recipe });
+  };
+
+  const editIngredient = (ingredient: Ingredient) => {
+    setIngredientFormState(IngredientType.Edit);
+    setEditableIngredient(ingredient);
+  };
+
+  const updateIngredient = (updatedIngredient: Ingredient) => {
+    const newIngredients = [...ingredients].map((ingredient: Ingredient) => {
+      return editableIngredient?.id === ingredient.id
+        ? updatedIngredient
+        : ingredient;
+    });
+
+    setIngredients(newIngredients);
+
+    // submitRecipe(
+    //   { ...props.recipe, ingredients: newIngredients },
+    //   props.recipe?._id
+    // );
+
+    setEditableIngredient(null);
+    setIngredientFormState(IngredientType.Add);
+  };
+
+  const deleteIngredient = (id: string) => {
+    const updatedIngredients = [...ingredients].filter(
+      (ingredient: Ingredient) => ingredient.id !== id
+    );
+    setIngredients(updatedIngredients);
   };
 
   const clearForm = () => {
@@ -122,14 +181,27 @@ const RecipeForm = (props: any) => {
             onChange={recipeInstructionsHandler}
           />
         </div>
-        {ingredients.map((ingredient: any, index: number) => {
+        {ingredients.map((ingredient: any) => {
           return (
-            <p key={index}>
-              {ingredient.name} ({ingredient.quantity} {ingredient.unit})
-            </p>
+            <div key={ingredient.id} className={classes.ingredient}>
+              <p>
+                {ingredient.name} ({ingredient.quantity} {ingredient.unit})
+              </p>
+              <div onClick={() => deleteIngredient(ingredient.id)}>
+                <FontAwesomeIcon icon={faClose} />
+              </div>
+              <div onClick={() => editIngredient(ingredient)}>
+                <FontAwesomeIcon icon={faEdit} />
+              </div>
+            </div>
           );
         })}
-        <IngredientForm addIngredient={addIngredient} />
+        <IngredientForm
+          addIngredient={addIngredient}
+          ingredient={editableIngredient}
+          viewState={ingredientFormState}
+          updateIngredient={updateIngredient}
+        />
         <button
           disabled={recipeFormIsValid}
           className="btn btn-primary"

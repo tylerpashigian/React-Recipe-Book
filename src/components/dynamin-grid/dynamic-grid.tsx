@@ -9,6 +9,7 @@ const DynamicGrid = (props: any) => {
     let rows: ReactElement[] = [];
     for (let row = 0; row <= rowCount; row++) {
       rows.push(
+        // TODO don't use index here
         <div className="row" key={`row_${row}`}>
           {createColumns()}
         </div>
@@ -23,7 +24,8 @@ const DynamicGrid = (props: any) => {
 
     for (let col = 0; col < props.cols; col++) {
       cols.push(
-        <div className={`col-md-${12 / props.cols}`} key={`recipe_${index}`}>
+        // TODO don't use index here
+        <div className={`col-md-${12 / props.cols}`} key={`item_${index}`}>
           {props.children[index]}
         </div>
       );
